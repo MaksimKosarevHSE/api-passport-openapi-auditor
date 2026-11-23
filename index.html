@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="API Passport — локальный учебный аудитор OpenAPI-контрактов" />
+    <title>API Passport — локальный аудит OpenAPI</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="API Passport — на главную">
+          <span class="brand-mark" aria-hidden="true">AP</span>
+          <span>
+            <strong>API Passport</strong>
+            <small>учебный security-аудит</small>
+          </span>
+        </a>
+        <nav aria-label="Основная навигация">
+          <a href="#audit">Аудит</a>
+          <a href="#method">Методика</a>
+          <a href="#about">О проекте</a>
+        </nav>
+        <span class="local-badge"><span aria-hidden="true">●</span> 100% локально</span>
+      </header>
+
+      <main id="top">
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">KIB-28 · защитный прототип</p>
+            <h1>Проверьте API-контракт до первого запроса</h1>
+            <p class="hero-lead">
+              Загрузите OpenAPI 3.x в формате JSON. Приложение локально найдёт операции без
+              заявленной защиты, небезопасные схемы аутентификации и слабые места описания данных.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#audit">Начать аудит</a>
+              <button class="button button-ghost" id="hero-demo" type="button">Запустить демо</button>
+            </div>
+            <ul class="promise-list" aria-label="Ключевые свойства">
+              <li>Без сетевых запросов</li>
+              <li>Только статический анализ</li>
+              <li>План исправлений за минуту</li>
+            </ul>
+          </div>
+          <aside class="hero-panel" aria-label="Пример результата аудита">
+            <div class="panel-head">
+              <span>Синтетический магазин</span>
+              <span class="status status-danger">Высокий риск</span>
+            </div>
+            <div class="score-ring" style="--score: 17">
+              <span><strong>17</strong><small>/100</small></span>
+            </div>
+            <div class="mini-stats">
+              <span><strong>4</strong> критичных</span>
+              <span><strong>1</strong> средний</span>
+              <span><strong>25%</strong> защищено</span>
+            </div>
+            <div class="finding-preview">
+              <span class="severity-dot high"></span>
+              <p><strong>POST /payments</strong><br />Чувствительная операция не требует аутентификацию</p>
+            </div>
+          </aside>
+        </section>
+
+        <section class="audit-section" id="audit">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Рабочий сценарий</p>
+              <h2>Аудит OpenAPI-описания</h2>
+            </div>
+            <p>Поддерживается OpenAPI 3.0/3.1 в JSON до 1 МБ. Данные не покидают браузер.</p>
+          </div>
+
+          <div class="workspace-grid">
+            <section class="input-card" aria-labelledby="input-title">
+              <div class="card-title-row">
+                <div>
+                  <span class="step">01</span>
+                  <h3 id="input-title">Передайте контракт</h3>
+                </div>
+                <button class="text-button" id="clear-input" type="button">Очистить</button>
+              </div>
+
+              <label class="dropzone" for="file-input" id="dropzone">
+                <input id="file-input" type="file" accept=".json,application/json" />
+                <span class="upload-icon" aria-hidden="true">⇧</span>
+                <strong>Перетащите JSON сюда</strong>
+                <small>или нажмите, чтобы выбрать файл</small>
+                <span class="file-name" id="file-name">Файл не выбран</span>
+              </label>
+
+              <div class="divider"><span>или вставьте JSON</span></div>
+              <label class="sr-only" for="spec-input">OpenAPI JSON</label>
+              <textarea id="spec-input" spellcheck="false" placeholder='{"openapi":"3.0.3","info":{...},"paths":{...}}'></textarea>
+
+              <div class="sample-row" aria-label="Синтетические примеры">
+                <span>Примеры:</span>
+                <button class="chip" data-sample="risk" type="button">Рискованный магазин</button>
+                <button class="chip" data-sample="partial" type="button">Проект в работе</button>
+                <button class="chip" data-sample="ready" type="button">Готов к релизу</button>
+              </div>
+              <p class="input-error" id="input-error" role="alert" aria-live="polite"></p>
+              <button class="button button-primary button-wide" id="analyze-button" type="button">
+                Выполнить локальный аудит
+              </button>
+            </section>
+
+            <section class="result-card empty" id="result-card" aria-labelledby="result-title" aria-live="polite">
+              <div class="result-empty" id="result-empty">
+                <span class="empty-icon" aria-hidden="true">⌁</span>
+                <h3 id="result-title">Результат появится здесь</h3>
+                <p>Выберите синтетический пример или вставьте собственный OpenAPI JSON.</p>
+                <ol>
+                  <li>Разберём endpoints и схемы защиты</li>
+                  <li>Покажем приоритетные проблемы</li>
+                  <li>Сформируем план исправлений</li>
+                </ol>
+              </div>
+
+              <div class="result-content" id="result-content" hidden>
+                <div class="result-topline">
+                  <div>
+                    <span class="step">02</span>
+                    <p class="result-kicker">Результат аудита</p>
+                    <h3 id="api-title">API</h3>
+                  </div>
+                  <span class="status" id="risk-status">—</span>
+                </div>
+
+                <div class="score-summary">
+                  <div class="score-ring result-ring" id="score-ring" style="--score: 0">
+                    <span><strong id="score-value">0</strong><small>/100</small></span>
+                  </div>
+                  <div>
+                    <p class="score-label">Индикативная оценка контракта</p>
+                    <p id="score-explanation">—</p>
+                  </div>
+                </div>
+
+                <div class="metric-grid">
+                  <article><span>Endpoints</span><strong id="metric-endpoints">0</strong></article>
+                  <article><span>Высокий риск</span><strong id="metric-high">0</strong></article>
+                  <article><span>Средний риск</span><strong id="metric-medium">0</strong></article>
+                  <article><span>Операции с защитой</span><strong id="metric-protected">0%</strong></article>
+                </div>
+
+                <div class="result-actions">
+                  <button class="button button-secondary" id="download-report" type="button">Скачать отчёт JSON</button>
+                  <button class="button button-ghost" id="print-report" type="button">Печать / PDF</button>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <section class="findings-panel" id="findings-panel" hidden aria-labelledby="findings-title">
+            <div class="findings-header">
+              <div>
+                <span class="step">03</span>
+                <h3 id="findings-title">Находки и план исправлений</h3>
+              </div>
+              <div class="filter-group" role="group" aria-label="Фильтр находок">
+                <button class="filter active" data-filter="all" type="button">Все</button>
+                <button class="filter" data-filter="high" type="button">Высокие</button>
+                <button class="filter" data-filter="medium" type="button">Средние</button>
+                <button class="filter" data-filter="low" type="button">Низкие</button>
+              </div>
+            </div>
+            <div class="findings-layout">
+              <div class="findings-list" id="findings-list"></div>
+              <aside class="fix-plan">
+                <p class="eyebrow">Сначала исправьте</p>
+                <ol id="fix-plan"></ol>
+                <p class="fine-print">Приоритет рассчитан по тяжести и числу затронутых операций.</p>
+              </aside>
+            </div>
+          </section>
+        </section>
+
+        <section class="method-section" id="method">
+          <div class="section-heading narrow">
+            <div>
+              <p class="eyebrow">Прозрачная методика</p>
+              <h2>Что именно проверяет прототип</h2>
+            </div>
+            <p>Правила объяснимы и выполняются в браузере. Это предварительная проверка контракта, а не пентест.</p>
+          </div>
+          <div class="rule-grid">
+            <article><span>01</span><h3>Покрытие защитой</h3><p>Есть ли у операций явное требование аутентификации и определена ли указанная схема.</p></article>
+            <article><span>02</span><h3>Чувствительные данные</h3><p>Не остались ли payment, token, password, email и другие чувствительные поля в открытых операциях.</p></article>
+            <article><span>03</span><h3>Безопасность транспорта</h3><p>Не заявлен ли HTTP-сервер без TLS в корневом списке servers.</p></article>
+            <article><span>04</span><h3>Слабые механизмы</h3><p>Отмечаются Basic Auth и API-ключи в query как решения, требующие дополнительного обоснования.</p></article>
+            <article><span>05</span><h3>Документирование ошибок</h3><p>Для защищённых операций проверяются ответы 401 и 403, для всех — успешный 2xx-ответ.</p></article>
+            <article><span>06</span><h3>Воспроизводимость</h3><p>Находка содержит путь, объяснение и конкретное исправление; результат можно выгрузить.</p></article>
+          </div>
+        </section>
+
+        <section class="about-section" id="about">
+          <div>
+            <p class="eyebrow">Ограничения по замыслу</p>
+            <h2>Безопасный учебный инструмент</h2>
+          </div>
+          <div class="about-grid">
+            <p><strong>Приложение не подключается к API</strong> и не отправляет запросы к серверам. Оно анализирует только переданный JSON.</p>
+            <p><strong>Оценка не доказывает защищённость.</strong> Она помогает разработчику найти пробелы в контракте до более глубокого тестирования.</p>
+            <p><strong>Используйте синтетические данные.</strong> Не загружайте реальные токены, ключи, персональные данные или внутренние спецификации без разрешения.</p>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <span>API Passport · KIB-28 · учебный прототип</span>
+        <span>Версия 1.0 · 18.11.2026</span>
+      </footer>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
